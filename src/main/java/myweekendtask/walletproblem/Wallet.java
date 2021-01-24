@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Wallet {
     private final List<Currency> wallet = new ArrayList<>();
-    public double totalAmount;
+    private double totalAmount;
 
 
     public Wallet() {
@@ -14,6 +14,7 @@ public class Wallet {
 
     public void add(Currency currency) throws NotAValidAmountException {
         if (currency.amount <= 0) throw new NotAValidAmountException("Not A Valid Amount");
+
         wallet.add(currency);
     }
 
@@ -29,4 +30,9 @@ public class Wallet {
         }
         return totalAmount;
     }
+
+    public double sumIn(Currency currencyType) {
+        return currencyType.convert(wallet);
+    }
+
 }
