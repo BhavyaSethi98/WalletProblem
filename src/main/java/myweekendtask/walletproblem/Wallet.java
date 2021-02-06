@@ -5,30 +5,31 @@ import java.util.List;
 
 public class Wallet {
     private final List<Currency> wallet = new ArrayList<>();
-    private double totalAmount;
+    private double totalMoney;
 
 
     public Wallet() {
-        this.totalAmount = 0;
+        this.totalMoney = 0;
     }
 
     public void add(Currency currency) throws NotAValidAmountException {
-        if (currency.amount <= 0) throw new NotAValidAmountException("Not A Valid Amount");
+        if (currency.amount < 0) throw new NotAValidAmountException();
 
         wallet.add(currency);
     }
 
-    public void retreive(Currency currencyValue) throws AmountNotPresentInWallet {
-        if (totalAmountInWallet() < currencyValue.amount) throw new AmountNotPresentInWallet("Amount not in wallet");
+    public Currency retreive(Currency currencyValue) throws AmountNotPresentInWallet {
+        if (totalAmountInWallet() < currencyValue.amount) throw new AmountNotPresentInWallet();
 
         wallet.remove(currencyValue);
+        return currencyValue;
     }
 
     private Double totalAmountInWallet() {
         for (Currency currency : wallet) {
-            this.totalAmount += currency.amount;
+            this.totalMoney += currency.amount;
         }
-        return totalAmount;
+        return totalMoney;
     }
 
     public double sumIn(Currency currencyType) {

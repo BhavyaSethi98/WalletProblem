@@ -22,13 +22,14 @@ public class WalletTest {
     }
 
     @Test
-    void shouldNotThrowExceptionIfAmountIsRetreived() throws NotAValidAmountException {
+    void shouldBeAbleToRetrieveAmount() throws AmountNotPresentInWallet, NotAValidAmountException {
         Rupee currencyValue = new Rupee(20.0);
         Wallet wallet = new Wallet();
 
         wallet.add(currencyValue);
+        double retrievedAmount = wallet.retreive(currencyValue).amount;
 
-        assertDoesNotThrow(() -> wallet.retreive(currencyValue));
+        assertEquals(20, retrievedAmount);
     }
 
     @Test
