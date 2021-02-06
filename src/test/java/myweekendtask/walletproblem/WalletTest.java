@@ -18,6 +18,7 @@ public class WalletTest {
         Currency twentyRupees = Currency.rupees(20);
 
         assertEquals(20, wallet.add(twentyRupees));
+        assertEquals(20,wallet.getBalanceAmount(CurrencyType.Rupee));
     }
 
     @Test
@@ -34,6 +35,7 @@ public class WalletTest {
         Currency oneDollar = Currency.dollars(1);
 
         assertThat(wallet.add(oneDollar), is(closeTo(1, 0.15)));
+        assertEquals(1,wallet.getBalanceAmount(CurrencyType.Dollar));
     }
 
     @Test
@@ -46,6 +48,7 @@ public class WalletTest {
         double retrievedAmount = wallet.retreive(twentyRupees);
 
         assertEquals(20, retrievedAmount);
+        assertEquals(0,wallet.getBalanceAmount(CurrencyType.Rupee));
     }
 
 
@@ -59,6 +62,7 @@ public class WalletTest {
         wallet.add(twentyRupees);
 
         assertThat(wallet.retreive(oneDollar), is(closeTo(1, 0.15)));
+        assertEquals(20,wallet.getBalanceAmount(CurrencyType.Rupee));
     }
 
 
