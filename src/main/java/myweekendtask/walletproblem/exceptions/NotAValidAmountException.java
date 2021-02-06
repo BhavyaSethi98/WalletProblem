@@ -1,4 +1,4 @@
-package myweekendtask.walletproblem;
+package myweekendtask.walletproblem.exceptions;
 
 public class NotAValidAmountException extends Exception {
     public NotAValidAmountException() {

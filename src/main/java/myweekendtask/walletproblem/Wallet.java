@@ -1,10 +1,10 @@
 package myweekendtask.walletproblem;
 
-import java.util.ArrayList;
-import java.util.List;
+import myweekendtask.walletproblem.exceptions.SufficientBalanceNotInWallet;
+import myweekendtask.walletproblem.exceptions.NotAValidAmountException;
 
 public class Wallet {
-    private final List<Currency> wallet = new ArrayList<>();
+
     private double totalMoney;
 
 
@@ -12,28 +12,32 @@ public class Wallet {
         this.totalMoney = 0;
     }
 
-    public void add(Currency currency) throws NotAValidAmountException {
+    public double add(Currency currency) throws NotAValidAmountException {
         if (currency.amount < 0) throw new NotAValidAmountException();
 
-        wallet.add(currency);
+        double moneyAdded = (currency.amount * currency.type.equivalence);
+        totalMoney += moneyAdded;
+
+        return currency.amount;
     }
 
-    public Currency retreive(Currency currencyValue) throws AmountNotPresentInWallet {
-        if (totalAmountInWallet() < currencyValue.amount) throw new AmountNotPresentInWallet();
+    public double retreive(Currency currency) throws SufficientBalanceNotInWallet {
 
-        wallet.remove(currencyValue);
-        return currencyValue;
+        Double value = currency.amount * currency.type.equivalence;
+
+        if (!checkBalance(value)) throw new SufficientBalanceNotInWallet();
+
+        totalMoney -= value;
+
+        return currency.amount;
     }
 
-    private Double totalAmountInWallet() {
-        for (Currency currency : wallet) {
-            this.totalMoney += currency.amount;
-        }
-        return totalMoney;
+    private boolean checkBalance(Double value) {
+        return (totalMoney - value) >= 0;
     }
 
-    public double sumIn(Currency currencyType) {
-        return currencyType.convert(wallet);
+    public double getBalanceAmount(CurrencyType type) {
+        return type.equals(CurrencyType.Rupee) ? totalMoney : totalMoney / CurrencyType.getDollarValueInRupees();
     }
 
 }

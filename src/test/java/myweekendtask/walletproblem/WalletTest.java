@@ -1,74 +1,106 @@
 package myweekendtask.walletproblem;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import myweekendtask.walletproblem.exceptions.SufficientBalanceNotInWallet;
+import myweekendtask.walletproblem.exceptions.NotAValidAmountException;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 public class WalletTest {
     @Test
-    void shouldNotThrowExceptionForPuttingMoneyInWallet() {
-        Rupee currencyValue = new Rupee(20.0);
+    void shouldReturnAmounAfterRupeeIsAddedInWallet() throws NotAValidAmountException {
         Wallet wallet = new Wallet();
+        Currency twentyRupees = Currency.rupees(20);
 
-        assertDoesNotThrow(() -> wallet.add(currencyValue));
+        assertEquals(20, wallet.add(twentyRupees));
     }
 
     @Test
     void shouldThrowExceptionIfValidAmountIsNotAdded() {
-        Rupee currencyValue = new Rupee(-20.0);
         Wallet wallet = new Wallet();
+        Currency twentyRupees = Currency.rupees(-20);
 
-        assertThrows(NotAValidAmountException.class, () -> wallet.add(currencyValue));
+        assertThrows(NotAValidAmountException.class, () -> wallet.add(twentyRupees));
     }
 
     @Test
-    void shouldBeAbleToRetrieveAmount() throws AmountNotPresentInWallet, NotAValidAmountException {
-        Rupee currencyValue = new Rupee(20.0);
+    void shouldReturnAmountAfterDollarsIsAddedInWallet() throws NotAValidAmountException {
         Wallet wallet = new Wallet();
+        Currency oneDollar = Currency.dollars(1);
 
-        wallet.add(currencyValue);
-        double retrievedAmount = wallet.retreive(currencyValue).amount;
+        assertThat(wallet.add(oneDollar), is(closeTo(1, 0.15)));
+    }
+
+    @Test
+    void shouldBeAbleToRetrieveAmountInRupeesFromWalletIfCurrencyTypeIsInRupees() throws NotAValidAmountException, SufficientBalanceNotInWallet {
+        Wallet wallet = new Wallet();
+        Currency twentyRupees = Currency.rupees(20);
+
+        wallet.add(twentyRupees);
+
+        double retrievedAmount = wallet.retreive(twentyRupees);
 
         assertEquals(20, retrievedAmount);
     }
 
+
+    @Test
+    void shouldBeAbleToRetrieveAmountInDollarsFromWalletIfCurrencyIsInDollars() throws NotAValidAmountException, SufficientBalanceNotInWallet {
+        Wallet wallet = new Wallet();
+        Currency oneDollar = Currency.dollars(1);
+        Currency twentyRupees = Currency.rupees(20);
+
+        wallet.add(oneDollar);
+        wallet.add(twentyRupees);
+
+        assertThat(wallet.retreive(oneDollar), is(closeTo(1, 0.15)));
+    }
+
+
     @Test
     void shouldThrowExceptionIfAmountIsRetreivedFromEmptyWallet() throws NotAValidAmountException {
-        Rupee currency1 = new Rupee(20.0);
-        Rupee currency2 = new Rupee(10.0);
         Wallet wallet = new Wallet();
+        Currency oneDollar = Currency.dollars(1);
+        Currency twentyRupees = Currency.rupees(20);
 
-        wallet.add(currency2);
+        wallet.add(twentyRupees);
 
-        assertThrows(AmountNotPresentInWallet.class, () -> wallet.retreive(currency1));
+        assertThrows(SufficientBalanceNotInWallet.class, () -> wallet.retreive(oneDollar));
     }
 
     @Test
     void shouldReturnTotalAmountIfPreferredCurrencyIsRupee() throws NotAValidAmountException {
         Wallet wallet = new Wallet();
-        Rupee rupee = new Rupee(50.0);
-        Dollars dollars = new Dollars(1.0);
+        Currency fiftyRupees = Currency.rupees(50);
+        Currency oneDollar = Currency.dollars(1);
 
-        wallet.add(rupee);
-        wallet.add(dollars);
-        double result = wallet.sumIn(rupee);
+        wallet.add(fiftyRupees);
+        wallet.add(oneDollar);
 
-        assertEquals(124.5, result, 0.001);
+        double result = wallet.getBalanceAmount(CurrencyType.Rupee);
+
+        assertEquals(124.5, result, 0.85);
     }
 
     @Test
     void shouldReturnTotalAmountIfPreferredCurrencyIsDollar() throws NotAValidAmountException {
 
-        Wallet wallet1 = new Wallet();
-        Rupee rupee1 = new Rupee(74.85);
-        Rupee rupee2 = new Rupee(149.7);
-        Dollars dollars = new Dollars(1.0);
+        Wallet wallet = new Wallet();
+        Currency rupee1 = Currency.rupees(74.85);
+        Currency rupee2 = Currency.rupees(149.7);
+        Currency dollars = Currency.dollars(1.0);
 
-        wallet1.add(rupee1);
-        wallet1.add(rupee2);
-        wallet1.add(dollars);
-        double result = wallet1.sumIn(dollars);
+        wallet.add(rupee1);
+        wallet.add(rupee2);
+        wallet.add(dollars);
 
-        assertEquals(4, result, 0.1);
+        double result = wallet.getBalanceAmount(CurrencyType.Dollar);
+
+        assertEquals(4, result, 0.15);
     }
 }
