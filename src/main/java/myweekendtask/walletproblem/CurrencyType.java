@@ -1,8 +1,8 @@
 package myweekendtask.walletproblem;
 
 public enum CurrencyType {
-    Rupee(1),
-    Dollar(74.85);
+    Rupee(1)
+    , Dollar(74.85);
 
     public double equivalence;
 
@@ -10,7 +10,4 @@ public enum CurrencyType {
         this.equivalence = value;
     }
 
-    public static double getDollarValueInRupees() {
-        return Dollar.equivalence;
-    }
 }
